@@ -1,0 +1,25 @@
+{
+  "name": "Moorhollow, the Adventure Game",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "shadow-cljs": "^2.19.2",
+    "tailwindcss": "^3.1.8"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/material": "^5.9.2",
+    "@mui/system": "^5.9.3",
+    "react": "^18.2.0",
+    "react-device-detect": "^2.2.2",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "shadow-cljs watch app && tailwindcss -i ./src/site.css -o ./public/css/site.css --watch",
+    "build": "tailwindcss i ./src/site.css -o ./public/css/site.css --minify && shadow-cljs release app"
+  }
+}
