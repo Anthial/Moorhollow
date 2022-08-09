@@ -15,4 +15,6 @@ npx shadow-cljs release app
 ```
 
 ### Tailwind CSS watch
+```
 npx tailwindcss -i ./src/site.css -o ./public/css/site.css --watch
+```
