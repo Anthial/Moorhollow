@@ -1,8 +1,6 @@
 (ns moorhollow.core
   (:require
-   [helix.core :refer [defnc $]]
-   [helix.hooks :as hooks]
-   [helix.dom :as d]
+   [rum.core :as rum]
    ["react-dom/client" :as rdom]
    ["react-router-dom" :refer [HashRouter Routes Route]]
    [moorhollow.header :refer [header]]
@@ -15,13 +13,13 @@
 
 
 
-(defnc textbox-text []
-  (d/div {:class-name "box-content"} (d/div {:class-name "p-1 text-left"}  "You've found your way to the old city of Moorhollow. What do you do?")
-         (d/div {:class-name "p-1 font-bold text-center"}  "Look Grab Key")
-         (d/div {:class-name "p-1 italic text-right"} "Look")
-         (d/div {:class-name "p-1 text-left"}  "This is a static example, but still.")
-         (d/div {:class-name "p-1 font-bold text-center"}  "Look Grab Key")
-         (d/div {:class-name "p-1 italic text-right"} "Look")))
+(rum/defc textbox-text []
+  [:div {:class-name "box-content"} [:div {:class-name "p-1 text-left"}  "You've found your way to the old city of Moorhollow. What do you do?"]
+         [:div {:class-name "p-1 font-bold text-center"}  "Look Grab Key"]
+         [:div {:class-name "p-1 italic text-right"} "Look"]
+         [:div {:class-name "p-1 text-left"}  "This is a static example, but still."]
+         [:div {:class-name "p-1 font-bold text-center"}  "Look Grab Key"]
+         [:div {:class-name "p-1 italic text-right"} "Look"]])
 
 (defn get-options [set-options]
   (set-options (clojure.string/join " " ["LOOK" "GRAB" "KEY"])))
@@ -48,83 +46,82 @@
   (set-messages (take 10 (conj current-messages (do-option input)))))
 
 
-(defnc get-desktop-ui []
-  (let [[messages set-messages] (hooks/use-state [])
-        [input set-input] (hooks/use-state "")
-        [options set-options] (hooks/use-state [])]
-    (d/div {:class-name "p-6 max-w-xl  mx-auto bg-white rounded-xl 
+(rum/defc get-desktop-ui []
+  (let [[messages set-messages] (rum/use-state [])
+        [input set-input] (rum/use-state "")
+        [options set-options] (rum/use-state [])]
+    [:div {:class-name "p-6 max-w-xl  mx-auto bg-white rounded-xl 
                          shadow-lg items-center space-x-4"}
-           (d/div {:class-name "shrink-1"}
-                  (d/div {:class-name "p-2 text-4xl text-center 
-                                       font-spooky"} "Welcome to Moorhollow"))
-           (d/div {:class-name "box-border overflow-y-auto h-72 
+           [:div {:class-name "shrink-1"}
+                  [:div {:class-name "p-2 text-4xl text-center 
+                                       font-spooky"} "Welcome to Moorhollow"]]
+           [:div {:class-name "box-border overflow-y-auto h-72 
                                 flex flex-col-reverse break-all 
                                 [overflow-anchor: none] border-solid 
                                 border-2 text-sm font-serif"}
-                  (d/div {:class "text-center p-4 font-bold"} options)
-                  (d/div (map-indexed (fn [idx item] (d/div
-                                                      {:key (str "message " (mod idx 15))} item))
-                                      messages))
-                  (d/div {:class-name "[overflow-anchor: auto]"}))
-           (d/div {:class-name "pt-3"}
-              (d/div (d/input {:class-name "p-2 text-left w-full text-md border-solid border-2" :type "text"
+                  [:div {:class "text-center p-4 font-bold"} options]
+                  [:div (map-indexed (fn [idx item] [:div
+                                                      {:key (str "message " (mod idx 15))} item])
+                                      messages)]
+                  [:div {:class-name "[overflow-anchor: auto]"}]]
+           [:div {:class-name "pt-3"}
+              [:div [:input {:class-name "p-2 text-left w-full text-md border-solid border-2" :type "text"
                                :on-change (fn [event] (set-input event.target.value))
                                :on-key-press (fn [event]
                                                (if (= event.key "Enter")
                                                  (do
                                                    (moorhollow-input set-options)
                                                    (update-response input messages set-messages))))
-                               :placeholder "Choice"}))))))
+                               :placeholder "Choice"}]]]]))
 
-(defnc get-mobile-ui []
-  (let [[messages set-messages] (hooks/use-state [])
-        [input set-input] (hooks/use-state "")
-        [options set-options] (hooks/use-state [])]
-    (d/div
-     (d/div {:class-name "shrink-1"}
-            (d/div {:class-name "p-2 text-4xl text-center 
-                                       font-spooky"} "Welcome to Moorhollow"))
-     (d/div {:class-name "overflow-y-auto h-[15rem] md:h-72 
+(rum/defc get-mobile-ui []
+  (let [[messages set-messages] (rum/use-state [])
+        [input set-input] (rum/use-state "")
+        [options set-options] (rum/use-state [])]
+    [:div
+     [:div {:class-name "shrink-1"}
+            [:div {:class-name "p-2 text-4xl text-center 
+                                       font-spooky"} "Welcome to Moorhollow"]]
+     [:div {:class-name "overflow-y-auto h-[15rem] md:h-72 
                                 flex flex-col-reverse break-word
                                 [overflow-anchor: none] 
                                 text-sm font-serif"}
-            (d/div {:class "text-center p-4 font-bold"} options)
-            (d/div {:class "p-4 text-center"} (map-indexed (fn [idx item] (d/div
-                                                {:key (str "message " (mod idx 15)) :class-name "pt-4"} item))
-                                (reverse messages)))
-            (d/div {:class-name "[overflow-anchor: auto]"}))
-     (d/div {:class-name "pt-2"}
-            (d/input {:class-name "p-2 max-w-xl text-center w-full text-md" :type "text"
+            [:div {:class "text-center p-4 font-bold"} options]
+            [:div {:class "p-4 text-center"} (map-indexed (fn [idx item] [:div
+                                                {:key (str "message " (mod idx 15)) :class-name "pt-4"}] item)
+                                (reverse messages))]
+            [:div {:class-name "[overflow-anchor: auto]"}]]
+     [:div {:class-name "pt-2"}
+            [:input {:class-name "p-2 max-w-xl text-center w-full text-md" :type "text"
                       :on-change (fn [event] (set-input event.target.value))
                       :on-key-press (fn [event]
                                       (if (= event.key "Enter")
                                         (do
                                           (moorhollow-input set-options)
                                           (update-response input messages set-messages))))
-                      :placeholder "Choice"}))
-     )))
+                      :placeholder "Choice"}]]]))
 
 
-(defnc greeting [] 
+(rum/defc greeting [] 
   (if (= (str isMobile) "true")
-    ($ get-mobile-ui)
-    ($ get-desktop-ui)))
+    (get-mobile-ui)
+    (get-desktop-ui)))
 
 
 
-(defnc home-page []
-  ($ HashRouter
-     (d/div {:class-name "bg-lightgrey"}
-            ($ header)
-            ($ Routes
-               ($ Route {:path "/" :element ($ greeting)})))))
+(rum/defc home-page []
+  (rum/adapt-class HashRouter
+     [:div {:class-name "bg-lightgrey"}
+            (header)
+            (rum/adapt-class Routes
+               (rum/adapt-class Route {:path "/" :element (greeting)}))]))
 
 ;; -------------------------
 ;; Initialize app
 (defonce root (rdom/createRoot (js/document.getElementById "app")))
 ;(set! root (rdom/createRoot (js/document.getElementById "app")))
 (defn mount-root []
-  (.render root ($ home-page)))
+  (.render root (home-page)))
   ;(d/render [home-page] (.getElementById js/document "app")))
 
 (defn ^:export init! []
