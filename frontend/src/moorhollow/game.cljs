@@ -1,7 +1,8 @@
 (ns moorhollow.game
   (:require [rum.core :as rum]
             ["react-device-detect" :refer [isMobile]]
-            [moorhollow.state.state :refer [make-choice get-messages]]))
+            [moorhollow.state.state :refer [make-choice get-messages message-c]]
+            [clojure.core.async :refer [go-loop <!]]))
 
 
 (rum/defc textbox-text []
@@ -31,12 +32,17 @@
                Feugiat nisl pretium fusce id. Auctor augue mauris augue neque."
     "Sorry, I don't understand what you are trying to do."))
 
+
+
+
 (defn moorhollow-input [set-options]
   (get-options set-options))
 (defn update-response [input current-messages set-messages]
   (make-choice input)
   (js/console.log current-messages)
-  (set-messages get-messages))
+  (go-loop [data (<! message-c)]
+    (set-messages data)
+    (js/console.log data)))
 
 
 (rum/defc get-desktop-ui []

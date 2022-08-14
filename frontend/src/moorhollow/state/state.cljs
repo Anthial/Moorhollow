@@ -1,5 +1,6 @@
 (ns moorhollow.state.state
-  (:require [ajax.core :refer [GET POST]]))
+  (:require [ajax.core :refer [GET POST]]
+            [clojure.core.async :refer [chan put!]]))
 
 
 
@@ -17,12 +18,14 @@
 (defn set-token [input]
   (swap! initial-state assoc :token input))
 
-(defn get-messages []
-  (:messages @initial-state))
+(def message-c (chan 1))
+(defn get-messages [] 
+    (:messages @initial-state))
 
 (defn add-message [input]
   (let [messages (take 10 (conj (get-messages) input))]
-    (swap! initial-state assoc :messages messages)))
+    (swap! initial-state assoc :messages messages)
+    (put! message-c (get-messages))))
 
 ;ex handlers from ajax core
 (defn handler [response]
