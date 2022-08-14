@@ -6,8 +6,8 @@
    ["@mui/material/" :as mui]))
 
 
-(rum/defc header []
-  (let [pages ["Home" "Game" "About"]
+(rum/defc header [token]
+  (let [pages (if (not= token "") ["Home" "Game" "About"] ["Home" "About"])
         [anchorElNav setAnchorElNav] (rum/use-state nil)]
     (defn handleOpenNavMenu
       [event]
