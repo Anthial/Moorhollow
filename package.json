@@ -1,6 +1,6 @@
 {
   "name": "Moorhollow, the Adventure Game",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "devDependencies": {
     "shadow-cljs": "^2.19.2",
@@ -19,7 +19,7 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "shadow-cljs watch app && tailwindcss -i ./src/site.css -o ./public/css/site.css --watch",
-    "build": "tailwindcss i ./src/site.css -o ./public/css/site.css --minify && shadow-cljs release app"
+    "start": "shadow-cljs watch app && tailwindcss -i ./frontend/src/site.css -o ./public/css/site.css --watch",
+    "build": "tailwindcss i ./frontend/src/site.css -o ./public/css/site.css --minify && shadow-cljs release app"
   }
 }
