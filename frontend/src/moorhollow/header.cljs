@@ -15,7 +15,7 @@
 
     (defn handleCloseNavMenu [] (setAnchorElNav nil))
 
-    (rum/adapt-class mui/AppBar {:position "fixed" :padding "10px" :color "secondary"}
+    (rum/adapt-class mui/AppBar {:position "fixed" :padding "10px" :sx #js {:background-color "darkorange"}}
        (rum/adapt-class mui/Container 
           (rum/adapt-class mui/Toolbar {:disableGutters true} 
               (rum/adapt-class mui/Button {:variant "h6" :nowrap "true" :component Link :to "/"
@@ -24,7 +24,7 @@
                                       :fontWeight 700
                                       :letterSpacing ".2rem"
                                       :fontSize "18px"
-                                      :color "inherit"
+                                      :color "purple"
                                       :textDecoration "none"}} "Moorhollow, the Adventure Game")
              (rum/adapt-class mui/Box {:sx #js {:flexGrow 1 :display #js {:xs "flex" :md "none"}}}
                 (rum/adapt-class mui/IconButton {:size "large" :aria-controls "menu-appbar"
@@ -47,7 +47,7 @@
                                            :component Link :to (str "/" page)}
                              (rum/adapt-class mui/Typography {:sx #js {:fontFamily "Jolly Lodger"
                                                          :fontSize "22px"
-                                                         :color "inherit"}
+                                                         :color "purple"}
                                                 :textAlign "center"} page))) pages)))
              (rum/adapt-class mui/Typography {:variant "h5" :nowrap "true"
                                 :component Link
@@ -58,7 +58,7 @@
                                          :fontFamily "Jolly Lodger"
                                          :fontWeight 700
                                          :letterSpacing ".3rem"
-                                         :color "inherit"
+                                         :color "purple"
                                          :textDecoration "none"
                                          :textAlign "center"}} "Moorhollow, the Adventure Game")
             
@@ -70,7 +70,7 @@
                                                         :fontFamily "Jolly Lodger"
                                                         :fontWeight "200"
                                                         :fontSize "18px"
-                                                        :color "white"
+                                                        :color "purple"
                                                         :display "block"}} page)) pages)))))))
 
 

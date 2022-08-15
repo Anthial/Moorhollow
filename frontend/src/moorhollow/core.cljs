@@ -5,8 +5,7 @@
    ["react-router-dom" :refer [HashRouter Routes Route]]
    [moorhollow.header :refer [header]]
    [moorhollow.game :refer [get-game-ui]]
-   [moorhollow.login :refer [get-login-ui]]
-   [moorhollow.state.state :refer [make-choice]]))
+   [moorhollow.login :refer [get-login-ui]]))
 
 ;; -------------------------
 ;; Views
@@ -18,7 +17,7 @@
 
 (rum/defc home-page [] 
     (rum/adapt-class HashRouter
-     [:div {:class-name "bg-lightgrey"}
+     [:div {:class "bg-lightgrey"}
             (header "l")
             (rum/adapt-class Routes
                              (rum/adapt-class Route {:path "/" :element (get-login-ui "")}) 
@@ -33,5 +32,4 @@
   ;(d/render [home-page] (.getElementById js/document "app")))
 
 (defn ^:export init! []
-  (mount-root)
-  (make-choice "init"))
+  (mount-root))

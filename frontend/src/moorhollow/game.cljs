@@ -1,103 +1,83 @@
 (ns moorhollow.game
   (:require [rum.core :as rum]
             ["react-device-detect" :refer [isMobile]]
-            [moorhollow.state.state :refer [make-choice get-messages message-c]]
+            [moorhollow.state.state :refer [get-messages message-c get-options]]
+            [moorhollow.state.events :refer [make-choice]]
             [clojure.core.async :refer [go-loop <!]]))
 
+;(defn get-options [set-options]
+;  (set-options (clojure.string/join " " ["LOOK" "GRAB" "KEY"])))
 
-(rum/defc textbox-text []
-  [:div {:class-name "box-content"} [:div {:class-name "p-1 text-left"}  "You've found your way to the old city of Moorhollow. What do you do?"]
-   [:div {:class-name "p-1 font-bold text-center"}  "Look Grab Key"]
-   [:div {:class-name "p-1 italic text-right"} "Look"]
-   [:div {:class-name "p-1 text-left"}  "This is a static example, but still."]
-   [:div {:class-name "p-1 font-bold text-center"}  "Look Grab Key"]
-   [:div {:class-name "p-1 italic text-right"} "Look"]])
-
-(defn get-options [set-options]
-  (set-options (clojure.string/join " " ["LOOK" "GRAB" "KEY"])))
-
-(defn do-option [text]
-  (case (clojure.string/lower-case text)
-    "look" "You look around and find that this is only a static example."
-    "grab" "You try to grab the static example but nothing changes..."
-    "key" "There is no key, you get nothing."
-    "longass" "Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-               sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-               Erat pellentesque adipiscing commodo elit at imperdiet dui accumsan. 
-               Id venenatis a condimentum vitae. Quam viverra orci sagittis eu volutpat odio. 
-               Egestas egestas fringilla phasellus faucibus scelerisque. 
-               Egestas fringilla phasellus faucibus scelerisque. 
-               Mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. 
-               In nulla posuere sollicitudin aliquam ultrices sagittis. 
-               Feugiat nisl pretium fusce id. Auctor augue mauris augue neque."
-    "Sorry, I don't understand what you are trying to do."))
-
-
-
-
-(defn moorhollow-input [set-options]
-  (get-options set-options))
-(defn update-response [input current-messages set-messages]
+;(defn moorhollow-input [set-options]
+  ;)
+(defn update-response [input current-messages set-messages set-options]
   (make-choice input)
   (js/console.log current-messages)
   (go-loop [data (<! message-c)]
-    (set-messages data)
-    (js/console.log data)))
+    (set-messages (:messages data))
+    (js/console.log data)
+    (set-options (clojure.string/join " " (get-options)))))
 
 
 (rum/defc get-desktop-ui []
   (let [[messages set-messages] (rum/use-state (get-messages))
         [input set-input] (rum/use-state "")
         [options set-options] (rum/use-state (clojure.string/join " " ["LOOK" "GRAB" "KEY"]))]
-    [:div {:class-name "p-6 max-w-xl  mx-auto bg-white rounded-xl 
+    [:div {:class "p-6 max-w-xl  mx-auto bg-rose-900 rounded-xl 
                          shadow-lg items-center space-x-4"}
-     [:div {:class-name "shrink-1"}
-      [:div {:class-name "p-2 text-4xl text-center 
-                                       font-spooky"} "Welcome to Moorhollow"]]
-     [:div {:class-name "box-border overflow-y-auto h-72 
+     [:div {:class "shrink-1"}
+      [:div {:class "p-2 text-4xl text-center 
+                                       font-spooky text-gray-300"} "Welcome to Moorhollow"]]
+     [:div {:class "box-border overflow-y-auto h-72 
                                 flex flex-col-reverse break-word 
                                 [overflow-anchor: none] border-solid 
-                                border-2 text-sm font-serif"}
-      [:div {:class "text-center p-4 font-bold"} options]
+                                border-2 text-sm font-serif
+                    bg-neutral-800 border-red-300"}
+      [:div {:class "text-center p-4 font-bold text-gray-300"} options]
       [:div (map-indexed (fn [idx item] [:div
-                                         {:key (str "message " (mod idx 15)) :class "pt-2"} item])
+                                         {:key (str "message " (mod idx 15)) :class "pt-2 pl-2 text-gray-300"} item])
                          (reverse messages))]
-      [:div {:class-name "[overflow-anchor: auto]"}]]
-     [:div {:class-name "pt-3"}
-      [:div [:input {:class-name "p-2 text-left w-full text-md border-solid border-2" :type "text"
+      [:div {:class "[overflow-anchor: auto]"}]]
+     [:div {:class "pt-3"}
+      [:div [:input {:class "p-2 text-left w-full text-md 
+                             bg-neutral-800	 text-gray-300 
+                             border-solid border-2 border-red-300" :type "text"
                      :on-change (fn [event] (set-input event.target.value))
                      :on-key-press (fn [event]
                                      (if (= event.key "Enter")
                                        (do
-                                         (moorhollow-input set-options)
-                                         (update-response input messages set-messages))))
+                                         ;(moorhollow-input set-options)
+                                         (update-response input messages set-messages set-options))))
                      :placeholder "Choice"}]]]]))
 
 (rum/defc get-mobile-ui []
-  (let [[messages set-messages] (rum/use-state [])
+  (let [[messages set-messages] (rum/use-state [(get-messages)])
         [input set-input] (rum/use-state "")
-        [options set-options] (rum/use-state [])]
+        [options set-options] (rum/use-state [(clojure.string/join " " ["LOOK" "GRAB" "KEY"])])]
     [:div
-     [:div {:class-name "shrink-1"}
-      [:div {:class-name "p-2 text-4xl text-center 
+     [:div {:class "shrink-1"}
+      [:div {:class "p-2 text-4xl text-center text-gray-300
                                        font-spooky"} "Welcome to Moorhollow"]]
-     [:div {:class-name "overflow-y-auto h-[15rem] md:h-72 
+     [:div {:class "overflow-y-auto h-[15rem] md:h-72 
                                 flex flex-col-reverse break-word
                                 [overflow-anchor: none] 
-                                text-sm font-serif"}
-      [:div {:class "text-center p-4 font-bold"} options]
-      [:div {:class "p-4 text-center"} (map-indexed (fn [idx item] [:div
-                                                                    {:key (str "message " (mod idx 15)) :class-name "pt-4"}] item)
-                                                    (reverse messages))]
-      [:div {:class-name "[overflow-anchor: auto]"}]]
-     [:div {:class-name "pt-2"}
-      [:input {:class-name "p-2 max-w-xl text-center w-full text-md" :type "text"
+                                text-sm font-serif
+                    bg-neutral-800"}
+      [:div {:class "text-center p-4 text-gray-300 font-bold"} options]
+      [:div {:class "p-4 text-center text-gray-300"} (map-indexed (fn [idx item] [:div
+                                                                                  {:key (str "message " (mod idx 15)) :class "pt-2 pl-2 text-gray-300"} item])
+                                                                  (reverse messages))]
+      [:div {:class "[overflow-anchor: auto]"}]]
+     [:div {:class "pt-2"}
+      [:input {:class "p-2 max-w-xl text-center bg-neutral-800 
+                       text-gray-300 w-full text-md" :type "text"
                :on-change (fn [event] (set-input event.target.value))
                :on-key-press (fn [event]
                                (if (= event.key "Enter")
                                  (do
-                                   (moorhollow-input set-options)
-                                   (update-response input messages set-messages))))
+                                   (js/alert "YOU PRESSED ENTER")
+                                   ;(moorhollow-input set-options)
+                                   (update-response input messages set-messages set-options))))
                :placeholder "Choice"}]]]))
 
 
