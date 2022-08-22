@@ -22,5 +22,5 @@ npx tailwindcss -i ./src/site.css -o ./public/css/site.css --watch
 ### Backend
 ```
 1. Install Requirements
-2. Run min.py
+2. Run min.hy
 ```
