@@ -1,10 +1,9 @@
 (ns moorhollow.header
   (:require
-   [rum.core :as rum]
+   [rum.core :as rum :refer [adapt-class]] 
    ["react-dom" :as rdom]
    ["react-router-dom" :refer [Link HashRouter]]
    ["@mui/material/" :as mui]))
-
 
 (rum/defc header [token]
   (let [pages (if (not= token "") ["Home" "Game" "About"] ["Home" "About"])
@@ -15,10 +14,10 @@
 
     (defn handleCloseNavMenu [] (setAnchorElNav nil))
 
-    (rum/adapt-class mui/AppBar {:position "fixed" :padding "10px" :sx #js {:background-color "darkorange"}}
-       (rum/adapt-class mui/Container 
-          (rum/adapt-class mui/Toolbar {:disableGutters true} 
-              (rum/adapt-class mui/Button {:variant "h6" :nowrap "true" :component Link :to "/"
+    (adapt-class mui/AppBar {:position "fixed" :padding "10px" :sx #js {:background-color "darkorange"}}
+       (adapt-class mui/Container 
+          (adapt-class mui/Toolbar {:disableGutters true} 
+              (adapt-class mui/Button {:variant "h6" :nowrap "true" :component Link :to "/"
                              :sx #js {:mr 2 :display #js {:xs "none" :md "flex"}
                                       :fontFamily "Jolly Lodger"
                                       :fontWeight 700
@@ -26,13 +25,13 @@
                                       :fontSize "18px"
                                       :color "purple"
                                       :textDecoration "none"}} "Moorhollow, the Adventure Game")
-             (rum/adapt-class mui/Box {:sx #js {:flexGrow 1 :display #js {:xs "flex" :md "none"}}}
-                (rum/adapt-class mui/IconButton {:size "large" :aria-controls "menu-appbar"
+             (adapt-class mui/Box {:sx #js {:flexGrow 1 :display #js {:xs "flex" :md "none"}}}
+                (adapt-class mui/IconButton {:size "large" :aria-controls "menu-appbar"
                                    :aria-haspopup "true"
                                    :onClick handleOpenNavMenu
                                    :color "inherit"}
                    "📜")
-                (rum/adapt-class mui/Menu {:id "menu-appbar"
+                (adapt-class mui/Menu {:id "menu-appbar"
                              :anchorEl anchorElNav
                              :anchorOrigin #js {:vertical "bottom"
                                              :horizontal "left"}
@@ -43,13 +42,13 @@
                              :onClose handleCloseNavMenu
                              :sx #js {:display #js {:xs "block" :md "none"}}}
                    (map (fn [page]
-                          (rum/adapt-class mui/MenuItem {:key page :onClick handleCloseNavMenu
+                          (adapt-class mui/MenuItem {:key page :onClick handleCloseNavMenu
                                            :component Link :to (str "/" page)}
-                             (rum/adapt-class mui/Typography {:sx #js {:fontFamily "Jolly Lodger"
+                             (adapt-class mui/Typography {:sx #js {:fontFamily "Jolly Lodger"
                                                          :fontSize "22px"
                                                          :color "purple"}
                                                 :textAlign "center"} page))) pages)))
-             (rum/adapt-class mui/Typography {:variant "h5" :nowrap "true"
+             (adapt-class mui/Typography {:variant "h5" :nowrap "true"
                                 :component Link
                                 :to "/"
                                 :sx #js {:mr 2
@@ -62,8 +61,8 @@
                                          :textDecoration "none"
                                          :textAlign "center"}} "Moorhollow, the Adventure Game")
             
-             (rum/adapt-class mui/Box {:justifyContent "right" :sx #js {:flexGrow 1 :display #js {:xs "none" :md "flex"}}}
-                (map (fn [page] (rum/adapt-class mui/Button {:key page 
+             (adapt-class mui/Box {:justifyContent "right" :sx #js {:flexGrow 1 :display #js {:xs "none" :md "flex"}}}
+                (map (fn [page] (adapt-class mui/Button {:key page 
                                                :component Link :to (str "/" page)
                                                :sx #js {:my 2
                                                         :marginLeft "25px" :marginRight "25px"
