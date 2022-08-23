@@ -26,12 +26,14 @@
   (swap! initial-state assoc :options input))
 
 (def message-c (chan 1))
+(defn respond-message-c []
+  (put! message-c "200 OK"))
+
 (defn get-messages []
   (:messages @initial-state))
 (defn add-message [input]
   (let [messages (take 10 (conj (get-messages) input))]
-    (swap! initial-state assoc :messages messages)
-    (put! message-c {:messages (get-messages) :options (get-options)})))
+    (swap! initial-state assoc :messages messages))) 
 
 
 

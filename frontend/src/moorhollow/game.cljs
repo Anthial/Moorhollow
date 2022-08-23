@@ -2,7 +2,7 @@
   (:require [rum.core :as rum]
             ["react-device-detect" :refer [isMobile]]
             [moorhollow.state.state :refer [get-messages message-c get-options]]
-            [moorhollow.state.events :refer [make-choice]]
+            [moorhollow.state.events :refer [make-choice fetch-init-message fetch-init-options]]
             [clojure.core.async :refer [go-loop <!]]))
 
 ;(defn get-options [set-options]
@@ -13,16 +13,27 @@
 (defn update-response [input current-messages set-messages set-options]
   (make-choice input)
   (js/console.log current-messages)
-  (go-loop [data (<! message-c)]
-    (set-messages (:messages data))
-    (js/console.log data)
+  (go-loop [response (<! message-c)]
+    (set-messages (get-messages))
+    (js/console.log response)
+    (set-options (clojure.string/join " " (get-options)))))
+
+(defn get-init-message [set-messages]
+  (fetch-init-message)
+  (go-loop [response (<! message-c)]
+    (js/console.log response)
+    (set-messages (get-messages))))
+(defn get-init-options [set-options]
+  (fetch-init-options)
+  (go-loop [response (<! message-c)]
+    (js/console.log response)
     (set-options (clojure.string/join " " (get-options)))))
 
 
 (rum/defc get-desktop-ui []
-  (let [[messages set-messages] (rum/use-state (get-messages))
+  (let [[messages set-messages] (rum/use-state [])
         [input set-input] (rum/use-state "")
-        [options set-options] (rum/use-state (clojure.string/join " " ["LOOK" "GRAB" "KEY"]))]
+        [options set-options] (rum/use-state (clojure.string/join " " ["open your eyes"]))]
     [:div {:class "p-6 max-w-xl  mx-auto bg-rose-900 rounded-xl 
                          shadow-lg items-center space-x-4"}
      [:div {:class "shrink-1"}
@@ -47,8 +58,14 @@
                                      (if (= event.key "Enter")
                                        (do
                                          ;(moorhollow-input set-options)
-                                         (update-response input messages set-messages set-options))))
-                     :placeholder "Choice"}]]]]))
+                                         (if (= input "open your eyes")
+                                           (do 
+                                             (get-init-message set-messages)
+                                             (get-init-options set-options))
+                                           (update-response input messages set-messages set-options))
+                                         (set-input ""))))
+                     :placeholder "Choice"
+                     :value input}]]]]))
 
 (rum/defc get-mobile-ui []
   (let [[messages set-messages] (rum/use-state [(get-messages)])
