@@ -19,8 +19,8 @@ npx shadow-cljs release app
 npx tailwindcss -i ./src/site.css -o ./public/css/site.css --watch
 ```
 
-### Backend
+### Python/Hy Backend
 ```
 1. Install Requirements
-2. Run min.py
+2. Run min.hy (through Hy, not Python)
 ```
